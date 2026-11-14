@@ -1,0 +1,804 @@
+# **M.A.R.S. Protocol — Essential Project Blueprint**
+
+**NASA Space Apps Challenge 2026 | Interplanetary Survival Guide: Martian Map**
+
+This document is the project's consolidated technical handoff. It defines the agreed system concept, architecture, data strategy, engineering decisions, subsystem responsibilities and expected final demonstration. It is intended to be usable as the starting context for a fresh ChatGPT conversation and as a technical brief for your teammate.
+
+# **1. Project definition**
+
+## **Project concept**
+
+**M.A.R.S. Protocol** is an astronaut-centred Mars Surface Mission Intelligence System. It integrates planetary datasets from multiple NASA missions with terrain analysis, human mobility and resource constraints, scientific objectives, and dynamic operational information to support the planning and execution of safe, adaptive Mars surface excursions.
+
+It is not simply a Mars visualisation tool or a shortest-path algorithm.
+
+Its purpose is to answer:
+
+> Given a crew, a scientific objective, the known Martian environment and finite mission resources, what is a feasible route and mission plan—and how should that plan adapt when new information or unexpected conditions arise?
+
+## **Primary objectives**
+
+1. Integrate heterogeneous NASA planetary datasets into a spatially aligned representation.
+2. Derive useful terrain and environmental intelligence.
+3. Estimate human mobility, EVA duration and resource consumption.
+4. Identify and prioritise scientific objectives.
+5. Generate terrain-aware, resource-constrained routes.
+6. Evaluate mission feasibility, uncertainty and safety.
+7. Support both pre-mission planning and field operations.
+8. Adapt the plan when an astronaut reports an obstacle, observation or change in mission conditions.
+
+**Core philosophy:** Scientists define the scientific priorities; the system operationalises them within human, environmental and resource constraints. It supports astronaut judgement rather than replacing it.
+
+# **2. Final system architecture — text block diagram**
+
+The architecture is organised into six major layers: data acquisition, geospatial processing, intelligence generation, mission planning, operational execution and feedback.
+
+```
+                    M.A.R.S. PROTOCOL
+       MARS SURFACE MISSION INTELLIGENCE SYSTEM
+                              |
+                              v
++----------------------------------------------------------+
+|  1. NASA DATA ACQUISITION & RESOURCE LAYER                |
+|                                                          |
+|  Orbital / Surface / Environmental / Scientific Data     |
+|                                                          |
+|  MOLA | HiRISE | CTX | CRISM | THEMIS                    |
+|  MCS | RAD | MAVEN | Mars Climate Database               |
+|  Curiosity / Perseverance Rover Imagery                  |
++----------------------------------------------------------+
+                              |
+                              v
++----------------------------------------------------------+
+|  2. DATA INGESTION & GEOSPATIAL PROCESSING                |
+|                                                          |
+|  - Data retrieval and format handling                    |
+|  - Metadata and provenance extraction                    |
+|  - Coordinate reference system alignment                |
+|  - Spatial co-registration                               |
+|  - Resolution and coverage management                    |
+|  - NoData / missing-data handling                        |
+|  - Temporal metadata and data-quality assessment         |
++----------------------------------------------------------+
+                              |
+                              v
++----------------------------------------------------------+
+|  3. MARTIAN ENVIRONMENTAL INTELLIGENCE ENGINE             |
+|                                                          |
+|  A. Terrain Analysis                                     |
+|     - Elevation                                          |
+|     - Slope                                              |
+|     - Surface roughness                                  |
+|     - Craters / cliffs / terrain features                |
+|                                                          |
+|  B. Geological & Scientific Analysis                     |
+|     - Geological context                                 |
+|     - Mineralogical indicators                           |
+|     - Scientific target identification                   |
+|                                                          |
+|  C. Environmental Context                                |
+|     - Temperature / atmospheric conditions               |
+|     - Dust / radiation context                           |
+|     - Temporal validity                                  |
+|                                                          |
+|  D. Data Quality & Uncertainty                           |
+|     - Coverage                                            |
+|     - Resolution                                          |
+|     - Observation age                                    |
+|     - Confidence / uncertainty                            |
++----------------------------------------------------------+
+                              |
+                              v
++----------------------------------------------------------+
+|  4. TRAVERSABILITY & HUMAN MISSION MODELLING              |
+|                                                          |
+|  A. Traversability Engine                                |
+|     - Terrain cost map                                   |
+|     - Hard terrain exclusions                            |
+|     - Uncertainty penalties                               |
+|     - Traversability classification                      |
+|                                                          |
+|  B. Human Mobility Model                                 |
+|     - Walking speed                                      |
+|     - Slope / roughness penalties                        |
+|     - Travel-time estimation                             |
+|                                                          |
+|  C. Resource & EVA Model                                 |
+|     - EVA duration                                       |
+|     - Oxygen / life-support budget                       |
+|     - Water / consumables                                |
+|     - Electrical energy                                  |
+|     - Emergency and return reserves                      |
+|                                                          |
+|  D. Operational Constraints                              |
+|     - Communication assumptions                          |
+|     - Habitat origin / return point                      |
+|     - Mission limits                                     |
++----------------------------------------------------------+
+                              |
+                              v
++----------------------------------------------------------+
+|  5. MISSION & ROUTE PLANNING ENGINE                       |
+|                                                          |
+|  A. Scientific Objective Manager                         |
+|     - Target coordinates                                 |
+|     - Objective priorities                               |
+|     - Task duration / equipment assumptions              |
+|     - Mandatory / optional objectives                    |
+|                                                          |
+|  B. Mission Planning Engine                              |
+|     - Select feasible objectives                         |
+|     - Determine task sequence                            |
+|     - Enforce mission and resource constraints           |
+|                                                          |
+|  C. Route Planning Engine                                |
+|     - A* / Weighted A*                                   |
+|     - Terrain-aware path costs                           |
+|     - Alternative route generation                       |
+|                                                          |
+|  D. Mission Feasibility & Safety Assessment              |
+|     - Time feasibility                                   |
+|     - Resource feasibility                               |
+|     - Return feasibility                                 |
+|     - Terrain and uncertainty assessment                 |
+|     - Accept / Caution / Do Not Recommend                |
++----------------------------------------------------------+
+                              |
+                              v
++----------------------------------------------------------+
+|  6. OPERATIONAL INTERFACE & DECISION SUPPORT              |
+|                                                          |
+|  A. Habitat Mission Operations Interface                 |
+|     - Mission configuration                              |
+|     - Layered Mars map                                   |
+|     - Route comparison                                   |
+|     - Resource and safety monitoring                     |
+|     - Objective management                               |
+|                                                          |
+|  B. Astronaut Field Operations Interface                 |
+|     - Current position / heading                         |
+|     - Next waypoint                                      |
+|     - Nearby hazards                                     |
+|     - Remaining time and resources                       |
+|     - Observation / obstacle reporting                   |
+|     - Replanning requests                                |
+|                                                          |
+|  C. Mission Report Generator                             |
+|     - Objectives and route                               |
+|     - Estimated distance / duration                      |
+|     - Resource estimates                                 |
+|     - Safety / uncertainty                               |
+|     - Data provenance and limitations                    |
++----------------------------------------------------------+
+                              |
+                              v
++----------------------------------------------------------+
+|  7. DYNAMIC FEEDBACK & REPLANNING LOOP                    |
+|                                                          |
+|  Astronaut input / new observation / changed condition   |
+|                              |                           |
+|                              v                           |
+|                  Update shared mission state             |
+|                              |                           |
+|                              v                           |
+|                Update hazards / constraints              |
+|                              |                           |
+|                              v                           |
+|              Re-evaluate mission feasibility             |
+|                              |                           |
+|                              v                           |
+|                Recalculate remaining route               |
+|                              |                           |
+|                              v                           |
+|               Update both operational interfaces        |
+|                                                          |
+|  If data are insufficient: flag uncertainty and          |
+|  recommend further observation / reconnaissance.        |
++----------------------------------------------------------+
+```
+
+**Important architectural principle:** Safety and uncertainty are not confined to Block 5. They operate throughout data ingestion, environmental analysis, traversability, mission feasibility and field operations.
+
+The two interfaces share one underlying mission state and planning engine. They must never become separate systems with conflicting information.
+
+# **3. Dataset and resource blueprint**
+
+The system uses data from multiple Mars missions and instruments. Each dataset contributes a specific kind of information; they are not interchangeable.
+
+A critical distinction: **not every dataset provides a high-resolution, continuously updated surface map.** Some provide local measurements, some provide regional context, and others provide modelled environmental estimates. The system must preserve these distinctions.
+
+## **3.1 Primary datasets**
+
+| Dataset / resource                         | Information provided                                               | Role in M.A.R.S. Protocol                                                                       |
+| ------------------------------------------ | ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------- |
+| **MOLA**                                   | Mars elevation and topography                                      | Regional elevation context and terrain analysis                                                 |
+| **HiRISE**                                 | Very high-resolution orbital imagery; selected stereo-derived DTMs | Local terrain interpretation, slope and roughness analysis where elevation models are available |
+| **CTX**                                    | Broad-area orbital imagery                                         | Regional geological context and target identification                                           |
+| **CRISM**                                  | Spectral and mineralogical observations                            | Identify mineralogical indicators, such as hydrated or clay-bearing materials                   |
+| **THEMIS**                                 | Thermal infrared observations and derived products                 | Thermal and geological context                                                                  |
+| **MCS**                                    | Atmospheric temperature, dust and related atmospheric profiles     | Atmospheric and environmental context                                                           |
+| **RAD**                                    | Radiation measurements at the Curiosity rover                      | Surface radiation reference measurements for relevant locations and observation periods         |
+| **MAVEN**                                  | Upper-atmosphere and solar-interaction measurements                | Broader atmospheric and space-weather context; not a direct local surface radiation map         |
+| **Mars Climate Database**                  | Modelled Martian atmospheric and climate variables                 | Environmental estimates where direct observations are insufficient                              |
+| **Curiosity / Perseverance rover imagery** | Navcam, Mastcam, navigation and panoramic surface imagery          | Ground-level visual context for destinations and geological features                            |
+
+### **Dataset roles and limitations**
+
+**MOLA**
+
+- Useful for broad topographic context.
+- Its spatial resolution is not sufficient to identify every local obstacle.
+- Resampling a coarse elevation model to a finer grid does not create additional terrain information.
+
+**HiRISE**
+
+- Particularly important for local terrain assessment.
+- Use actual DTM products for quantitative elevation, slope and roughness analysis.
+- High-resolution images alone do not automatically provide reliable elevation.
+
+**CTX**
+
+- Useful for identifying geological structures and selecting study areas.
+- Provides broader coverage than HiRISE, but at lower spatial detail.
+
+**CRISM**
+
+- Helps identify scientifically interesting mineralogical regions.
+- Mineralogical indicators are not automatically proof of a particular geological interpretation.
+
+**THEMIS, MCS, RAD and MAVEN**
+
+- Provide useful environmental context.
+- Their spatial and temporal coverage differs considerably.
+- Do not represent historical measurements as live environmental conditions.
+
+**Rover imagery**
+
+- Provides a surface-level visual reference.
+- It must be associated with its actual location, observation date and provenance where available.
+- Distinguish imagery captured at the target from imagery captured nearby or merely representative of the region.
+
+## **3.2 Supporting NASA resources**
+
+These are the principal discovery and access resources for the project:
+
+1. **NASA JPL Mars Trek:** [https://trek.nasa.gov/mars/](https://trek.nasa.gov/mars/?utm_source=chatgpt.com)\
+   Explore Mars datasets, landing sites and geographic context.
+2. **USGS–NASA Planetary Geologic Mapping Program:**\
+   [https://astrogeology-usgs.hub.arcgis.com/pages/interactive-maps-mars](https://astrogeology-usgs.hub.arcgis.com/pages/interactive-maps-mars?utm_source=chatgpt.com)\
+   Geological maps and planetary mapping resources.
+3. **NASA Planetary Data System (PDS):** [https://pds.nasa.gov/](https://pds.nasa.gov/?utm_source=chatgpt.com)\
+   Primary archive for planetary mission data and instrument products.
+4. **NASA Mars Orbital Data Explorer / instrument archives:** Use mission-specific archives to locate original products and metadata where appropriate.
+5. **Mars Climate Database:** [https://www-mars.lmd.jussieu.fr/](https://www-mars.lmd.jussieu.fr/?utm_source=chatgpt.com)\
+   Modelled atmospheric and climate information.
+6. **NASA/JPL rover image archives:** Use the Curiosity and Perseverance mission image repositories for surface imagery and observation metadata.
+
+**Data acquisition rule:** Mars Trek is a discovery and exploration resource, not a guarantee that every displayed layer can be downloaded as a numerical raster. For actual computation, obtain suitable source products from the relevant archives.
+
+## **3.3 Data categories**
+
+Every layer must be classified according to how its information was obtained.
+
+| Category         | Meaning                                       | Example                                             |
+| ---------------- | --------------------------------------------- | --------------------------------------------------- |
+| Observed         | Direct instrument measurement                 | HiRISE image, RAD measurement                       |
+| Derived          | Computed from observations                    | Slope, roughness                                    |
+| Modelled         | Estimated using a physical or empirical model | Climate estimates                                   |
+| Scenario-defined | Assumed for the hypothetical human mission    | Habitat coordinate, astronaut speed, oxygen reserve |
+
+This classification is essential for scientific credibility.
+
+**Do not fabricate high-resolution environmental data.** Where coverage is missing, represent the area as unknown or uncertain—not as safe.
+
+# **4. Geospatial processing and derived intelligence**
+
+The data pipeline must turn heterogeneous source products into usable, spatially aligned information.
+
+## **4.1 Processing sequence**
+
+1. Select the study-region boundary.
+2. Retrieve suitable source products.
+3. Extract spatial, temporal and instrument metadata.
+4. Convert datasets into compatible Mars coordinate systems.
+5. Co-register spatially overlapping datasets.
+6. Inspect native resolution and coverage.
+7. Choose an appropriate working resolution.
+8. Handle missing data and NoData regions.
+9. Derive analytical layers.
+10. Store the resulting layers with source and processing provenance.
+
+## **4.2 Essential derived layers**
+
+**Elevation:** Surface height relative to the chosen Mars reference.
+
+**Slope:** Derived from elevation gradients.
+
+\\[ \theta=\tan^{-1}\left( \sqrt{ \left(\frac{\partial z}{\partial x}\right)^2+ \left(\frac{\partial z}{\partial y}\right)^2 } \right) \\]
+
+**Roughness:** A local measure of terrain variation, potentially calculated using moving-window elevation standard deviation.
+
+**Geological context:** Interpreted geological features and mineralogical indicators.
+
+**Environmental context:** Temperature, dust, atmospheric and radiation information, with temporal metadata.
+
+**Data coverage and quality:** Spatial coverage, resolution, observation age and confidence.
+
+These layers feed the traversability and mission-planning subsystems.
+
+# **5. Core subsystem specifications**
+
+This section defines what each subsystem must actually do, rather than merely naming its function.
+
+## **5.1 Data ingestion and geospatial processing**
+
+**Purpose:** Convert heterogeneous NASA data products into a consistent spatial information base.
+
+Core responsibilities:
+
+- Read source formats and extract metadata.
+- Align coordinate systems.
+- Manage resolution mismatches.
+- Preserve native resolution and source provenance.
+- Detect missing, stale and unsuitable data.
+- Track observation dates and temporal validity.
+
+**Output:** A spatially aligned collection of source and derived layers, accompanied by metadata and quality information.
+
+## **5.2 Environmental intelligence engine**
+
+**Purpose:** Convert raw observations into useful environmental knowledge.
+
+Core responsibilities:
+
+- Calculate slope and roughness.
+- Identify relevant terrain features.
+- Integrate geological and mineralogical context.
+- Provide atmospheric and radiation context.
+- Identify potential scientific targets.
+- Preserve uncertainty and data limitations.
+
+**Output:** Terrain, geology, environmental, scientific-interest and data-quality layers.
+
+## **5.3 Traversability engine**
+
+**Purpose:** Determine which areas are suitable for human traversal under the selected mission assumptions.
+
+Core responsibilities:
+
+- Convert terrain information into a traversability grid.
+- Calculate terrain-related movement costs.
+- Apply hard exclusions to unacceptable terrain.
+- Penalise uncertain or poorly observed regions.
+- Identify potential obstacles and hazardous zones.
+
+**Output:** A traversability map and spatial cost representation for route planning.
+
+Important: A high traversal cost is not identical to a hard prohibition. Confirmed unacceptable terrain should be excluded; uncertain terrain should be flagged or penalised according to the mission's risk policy.
+
+## **5.4 Human mobility and resource model**
+
+**Purpose:** Estimate whether the astronaut can complete the mission and return within operational limits.
+
+Core responsibilities:
+
+- Estimate effective walking speed.
+- Account for terrain-related movement penalties.
+- Estimate travel time.
+- Estimate time spent performing scientific tasks.
+- Track separate resource budgets.
+- Preserve emergency and return reserves.
+
+A conceptual mobility model:
+
+\\[ v\_{\mathrm{effective}} = v_0 f\_{\mathrm{slope}}(\theta) f\_{\mathrm{roughness}}(r) \\]
+
+Travel time:
+
+\\[ T\_{\mathrm{travel}}= \sum_i \frac{d_i}{v\_{\mathrm{effective},i}} \\]
+
+Mission time:
+
+\\[ T\_{\mathrm{mission}}= T\_{\mathrm{travel}}+ T\_{\mathrm{science}}+ T\_{\mathrm{contingency}} \\]
+
+For each resource \\(k\\):
+
+\\[ R\_{k,\mathrm{remaining}}= R\_{k,\mathrm{initial}}- R\_{k,\mathrm{consumed}} \\]
+
+The system must maintain separate budgets for oxygen/life support, electrical energy, water, time and other consumables. Do not collapse them into one arbitrary resource score.
+
+**Output:** Estimated mission duration, resource consumption, remaining reserves and return feasibility.
+
+## **5.5 Scientific objective manager**
+
+**Purpose:** Represent what the astronaut is trying to accomplish scientifically.
+
+Each objective should contain:
+
+- Target location or area.
+- Scientific purpose.
+- Priority.
+- Estimated activity duration.
+- Required equipment or operational assumptions.
+- Mandatory or optional status.
+
+Distinguish a **destination** from an **objective**: several scientific activities may take place at one destination.
+
+Initial scientific targets should be grounded in published geological interpretations and available NASA observations.
+
+**Output:** A structured set of mission objectives and their operational requirements.
+
+## **5.6 Mission planning engine**
+
+**Purpose:** Decide which objectives can be completed and in what order.
+
+This is not the same as route planning.
+
+The problem becomes a resource-constrained orienteering / prize-collecting routing problem when objectives have different priorities and some can be omitted.
+
+A simplified objective function:
+
+\\[ \max \sum_i p_i x_i \\]
+
+Subject to:
+
+\\[ T\_{\mathrm{travel}}+T\_{\mathrm{tasks}}\leq T\_{\max} \\]
+
+and separate resource, safety and return constraints.
+
+Core responsibilities:
+
+- Select feasible objectives.
+- Respect mandatory tasks and operator-specified order.
+- Sequence optional objectives when enabled.
+- Reject infeasible combinations.
+- Recommend splitting a mission when appropriate.
+
+**Output:** A feasible objective sequence—or an explicit statement that no feasible mission exists.
+
+## **5.7 Route planning engine**
+
+**Purpose:** Find a practical route between the habitat and selected objectives.
+
+Use grid-based path planning initially.
+
+A\*:
+
+\\[ f(n)=g(n)+h(n) \\]
+
+Weighted A\*:
+
+\\[ f(n)=g(n)+\epsilon h(n),\qquad \epsilon\geq1 \\]
+
+A mission-aware route cost may combine:
+
+\\[ J=w_dD+w_sC\_{\mathrm{slope}} +w_rC\_{\mathrm{roughness}} +w_hC\_{\mathrm{hazard}} +w_uC\_{\mathrm{uncertainty}} \\]
+
+Hard safety exclusions and mission constraints must remain separate from soft weighted preferences.
+
+Generate a small number of useful alternatives:
+
+- Fastest feasible.
+- Lower-risk.
+- Science-oriented, where appropriate.
+
+**Output:** Route coordinates, distance, estimated travel time, terrain cost, hazards and route alternatives.
+
+## **5.8 Safety and uncertainty assessment**
+
+**Purpose:** Prevent the planner from presenting an apparently attractive but operationally unsuitable mission.
+
+Safety checks occur throughout the system.
+
+Three communication states:
+
+1. **Acceptable under current assumptions:** No identified constraint violation; not a guarantee of safety.
+2. **Caution:** Additional assessment or more information recommended.
+3. **Do not recommend:** A hard constraint is violated or the mission is not sufficiently supportable.
+
+The system must be able to reject an infeasible mission or route. It must never force a route merely because one is requested.
+
+## **5.9 Operational interfaces**
+
+**Habitat interface**
+
+- Detailed map and layer controls.
+- Mission configuration.
+- Scientific objective selection.
+- Route alternatives.
+- Resource and safety assessment.
+- Mission monitoring and reporting.
+
+**Astronaut field interface**
+
+- Current position and heading.
+- Next waypoint.
+- Nearby hazards and landmarks.
+- Remaining time and resources.
+- Observation and obstacle reporting.
+- Replanning requests.
+
+The selected field-interface concept is a wrist/arm-mounted tactical map as the primary detailed display, complemented by a minimal helmet HUD for glanceable critical information. Voice and glove-compatible controls are useful interaction concepts, but the hackathon implementation only needs to simulate the field interface.
+
+## **5.10 Dynamic feedback and replanning**
+
+**Purpose:** Allow the plan to evolve during an EVA.
+
+Example operational sequence:
+
+```
+Astronaut reports an obstacle
+             |
+             v
+Update obstacle / mission state
+             |
+             v
+Update traversability information
+             |
+             v
+Reassess remaining mission feasibility
+             |
+             v
+Recalculate remaining route
+             |
+             v
+Update habitat and field interfaces
+             |
+             v
+Continue / modify / abort mission
+```
+
+An unexpected scientific observation can also be reported. The system should evaluate whether investigating it is feasible without compromising mandatory tasks or emergency reserves.
+
+# **6. Final engineering and design decisions**
+
+These decisions are considered the project's agreed baseline. A new implementation should not casually change them.
+
+| Area                  | Agreed decision                                                                          |
+| --------------------- | ---------------------------------------------------------------------------------------- |
+| Primary user          | Human Mars surface explorer and habitat mission operations team                          |
+| Mission type          | Human Marswalk / EVA                                                                     |
+| Initial crew          | One astronaut                                                                            |
+| Habitat               | One hypothetical habitat                                                                 |
+| Habitat role          | Mission origin, return destination and operational reference                             |
+| Study regions         | Two: one well-characterised region, then one with weaker data coverage                   |
+| Data                  | Real NASA observations wherever suitable; transparent derived and modelled layers        |
+| Mission assumptions   | Scenario-defined and literature-informed, not claimed as validated astronaut performance |
+| Route algorithm       | A\* initially; Weighted A\* if useful                                                    |
+| Route objective       | Terrain-aware, mission-aware and resource-feasible—not simply shortest distance          |
+| Mission planning      | Separate from route planning                                                             |
+| Scientific objectives | Initially one mandatory target; progressively introduce multiple and optional targets    |
+| Safety                | Multilayered, with hard constraints, uncertainty handling and explicit infeasibility     |
+| Interfaces            | Habitat operations interface and astronaut field interface                               |
+| Shared state          | Both interfaces use one underlying mission state and planning engine                     |
+| Dynamic operation     | Support obstacle reporting, new observations and replanning                              |
+| Rover imagery         | Ground-level context, with location and provenance                                       |
+| Temporal data         | Observation dates, validity and freshness must be visible                                |
+| Resource stations     | Deferred; future extension                                                               |
+| Robotic autonomy      | Deferred; reconnaissance recommendations may be represented simply                       |
+
+## **6.1 One habitat, multiple objectives**
+
+The initial mission model is:
+
+\\[ H\rightarrow O_1\rightarrow H \\]
+
+Where:
+
+- \\(H\\) = hypothetical habitat.
+- \\(O_1\\) = scientific destination/objective.
+
+The architecture should eventually support:
+
+\\[ H\rightarrow O_1\rightarrow O_2\rightarrow H \\]
+
+For example, an astronaut might visit a geological site and then perform a second task elsewhere, provided the mission remains feasible.
+
+Future resource stations could be represented as separate infrastructure nodes:
+
+\\[ H\rightarrow O_1\rightarrow S_1\rightarrow O_2\rightarrow H \\]
+
+Here \\(S_1\\) could provide oxygen, water, electrical charging or other supplies. This is a future extension, not a requirement for the initial implementation.
+
+**Non-negotiable rule:** Optional scientific objectives must never consume emergency or safe-return reserves. If another task makes the mission unsustainable, the system should warn the operator or recommend a separate EVA.
+
+## **6.2 Two-stage geographical validation**
+
+We agreed not to demonstrate the system in only one convenient location.
+
+- **Region 1 — Demonstration region:** A well-studied area with sufficient topographic, imagery and scientific coverage to demonstrate the complete pipeline.
+- **Region 2 — Robustness region:** An area with weaker or patchier coverage to test missing-data handling, uncertainty representation and conservative route planning.
+
+Gale Crater / Mount Sharp is a candidate because of Curiosity's extensive exploration and geological context. However, the final choice must depend on verified coverage of suitable elevation models, imagery and other required datasets—not merely the region's scientific prominence.
+
+The habitat coordinate will be hypothetical and explicitly labelled as a scenario assumption. We are not claiming it is a NASA-approved or probable human landing site.
+
+## **6.3 Important modelling principles**
+
+- Do not confuse visual imagery with numerical elevation data.
+- Do not infer local radiation or atmospheric conditions from measurements that lack suitable spatial or temporal coverage.
+- Do not treat unknown terrain as safe terrain.
+- Do not treat resampled data as genuinely higher-resolution data.
+- Do not use arbitrary universal astronaut mobility or safety thresholds.
+- Keep hard constraints separate from weighted route preferences.
+- Preserve data provenance, uncertainty and temporal validity.
+- If no feasible mission exists, report that honestly.
+
+# **7. Implementation scope and priorities**
+
+The architecture is ambitious, but the implementation must be constrained to a demonstrable end-to-end system.
+
+## **Priority 1 — Essential working system**
+
+1. Select one study region and obtain real NASA data.
+2. Build the ingestion and geospatial processing pipeline.
+3. Generate elevation, slope and roughness layers where suitable data permit.
+4. Build a traversability representation.
+5. Define one hypothetical habitat and one scientific target.
+6. Implement human mobility and resource-budget calculations.
+7. Implement A\* terrain-aware route planning.
+8. Implement mission feasibility and safety checks.
+9. Display the layered map, route and mission information.
+
+## **Priority 2 — Essential demonstration refinements**
+
+1. Add a second operational interface simulating astronaut field operations.
+2. Integrate relevant rover surface imagery.
+3. Display dataset provenance, coverage and observation dates.
+4. Demonstrate dynamic obstacle reporting and replanning.
+5. Generate a mission report.
+
+## **Priority 3 — Stretch goals**
+
+- Multiple scientific objectives with flexible ordering.
+- Optional scientific tasks and priority-based selection.
+- Alternative route comparison.
+- Second-region robustness testing.
+- More detailed atmospheric and radiation integration.
+- Communication coverage modelling.
+- Resource stations and replenishment.
+- Robotic reconnaissance recommendations.
+
+Priority 3 should not compromise the reliability of Priority 1.
+
+# **8. Validation and testing expectations**
+
+The system must demonstrate that its decisions are useful, not merely that the application runs.
+
+| Test scenario                               | Expected system behaviour                      |
+| ------------------------------------------- | ---------------------------------------------- |
+| Shortest route crosses unacceptable terrain | Reject or avoid that route                     |
+| Route exceeds EVA time budget               | Mark mission infeasible                        |
+| Route consumes emergency reserves           | Reject the mission                             |
+| Terrain data are missing                    | Flag uncertainty and avoid treating it as safe |
+| A science-oriented route is infeasible      | Explain the limiting constraint                |
+| An obstacle is reported during EVA          | Update the route and reassess feasibility      |
+| Additional objective is requested           | Check time, resources and return feasibility   |
+| No valid route exists                       | Explicitly report no feasible route            |
+
+Compare three planning approaches:
+
+1. Distance-only baseline.
+2. Terrain-aware planning.
+3. Mission-aware planning.
+
+Evaluate:
+
+- Route distance.
+- Estimated travel duration.
+- Terrain cost.
+- Scientific objectives completed.
+- Resource consumption.
+- Return feasibility.
+- Exposure to uncertain terrain.
+- Computation time.
+
+Also validate slope calculations against a known test surface and verify that the path planner avoids deliberately introduced obstacles.
+
+# **9. Final deliverable expectation**
+
+Target final submission
+
+The final submission should be a functioning, scientifically grounded **Marswalk Mission Intelligence System**, demonstrated through one coherent simulated Marswalk.
+
+## **Expected demonstration sequence**
+
+```
+1. SELECT MARTIAN STUDY REGION
+            |
+            v
+2. LOAD NASA DATA LAYERS
+            |
+            v
+3. VIEW TERRAIN / GEOLOGY / ENVIRONMENT
+            |
+            v
+4. SELECT HYPOTHETICAL HABITAT
+            |
+            v
+5. DEFINE SCIENTIFIC OBJECTIVE
+            |
+            v
+6. CONFIGURE EVA AND RESOURCES
+            |
+            v
+7. GENERATE ROUTE ALTERNATIVES
+            |
+            v
+8. EVALUATE SAFETY AND FEASIBILITY
+            |
+            v
+9. START SIMULATED MARSWALK
+            |
+            v
+10. REPORT AN OBSTACLE / NEW OBSERVATION
+            |
+            v
+11. DYNAMICALLY REPLAN
+            |
+            v
+12. GENERATE MISSION REPORT
+```
+
+## **Final technical deliverables**
+
+| Deliverable             | Expected contents                                                        |
+| ----------------------- | ------------------------------------------------------------------------ |
+| Working application     | Layered Martian map, mission planning and operational interfaces         |
+| Dataset inventory       | Source, instrument, resolution, coverage, date and provenance            |
+| Geospatial pipeline     | Ingestion, alignment, processing and derived layers                      |
+| Traversability engine   | Terrain costs, exclusions and uncertainty handling                       |
+| Mission model           | Mobility, EVA duration, resource budgets and reserves                    |
+| Planning engines        | Scientific objective sequencing and A\* route planning                   |
+| Safety assessment       | Feasibility, warnings, constraints and uncertainty                       |
+| Dynamic field mode      | Simulated astronaut movement, reporting and replanning                   |
+| Mission report          | Route, objectives, time, resources, safety, data sources and limitations |
+| Technical documentation | Architecture, methodology, assumptions, validation and limitations       |
+| Demo video              | Clear end-to-end demonstration                                           |
+| Reproducible repository | Source code, data references, setup instructions and documentation       |
+
+## **Documentation structure**
+
+The technical report should contain:
+
+1. Problem statement and project motivation.
+2. Scientific and operational background.
+3. System architecture.
+4. Dataset inventory and provenance.
+5. Geospatial processing methodology.
+6. Terrain and environmental analysis.
+7. Mobility and resource modelling.
+8. Mission and route optimisation.
+9. Safety and uncertainty framework.
+10. Implementation and interface design.
+11. Validation and results.
+12. Limitations and future work.
+13. Reproducibility instructions.
+
+# **10. Handoff summary — the essential project identity**
+
+This is the compact context that should be carried into another conversation or shared with your teammate.
+
+**Project:** M.A.R.S. Protocol
+
+**Challenge:** NASA Space Apps 2026 — Interplanetary Survival Guide: Martian Map.
+
+**Problem:** Future Mars explorers need more than a geographic map. They need integrated terrain, geological, environmental and operational intelligence to plan and conduct scientific surface excursions safely.
+
+**Solution:** An astronaut-centred Mars Surface Mission Intelligence System integrating multiple NASA planetary datasets with terrain analysis, human mobility and resource models, scientific objectives, mission optimisation, route planning, uncertainty assessment and dynamic field operations.
+
+**System architecture:** NASA data acquisition → geospatial processing → environmental intelligence → traversability and human mission modelling → mission and route planning → operational interfaces → dynamic feedback and replanning.
+
+**Core algorithms:** Raster-based terrain analysis, slope and roughness derivation, traversability cost modelling, A\*/Weighted A\* route planning, resource-constrained mission feasibility and objective sequencing.
+
+**Initial operational scenario:** One hypothetical habitat, one astronaut, one well-characterised Martian study region and at least one scientific objective. A second, less well-characterised region is used for robustness testing.
+
+**Interfaces:** Habitat mission-control workstation and simulated astronaut wrist-mounted field interface, sharing one mission state.
+
+**Critical engineering principles:** Real NASA data, transparent assumptions, explicit provenance, temporal validity, uncertainty-aware planning, separate resource budgets, hard safety constraints and honest rejection of infeasible missions.
+
+**Final demonstration:** Plan a Marswalk, evaluate routes and resources, simulate field operations, report an unexpected obstacle, dynamically replan and generate a mission report.
+
+**Scope discipline:** Deliver a reliable end-to-end mission intelligence system first. Multiple objectives, resource stations, advanced environmental modelling and robotic autonomy are extensions—not reasons to compromise the core system.
+
+**My recommendation for the next execution step:** Freeze this blueprint as the baseline specification. Then create a concrete implementation plan assigning each subsystem, dataset, algorithm and deliverable to one of the two team members, with explicit interfaces between their work.
