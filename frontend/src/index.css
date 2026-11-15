@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: dark; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-synthesis: none; text-rendering: optimizeLegibility; background: #101113; }
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; min-height: 100vh; }
+button, select { font: inherit; }
+.eyebrow { color: #78818a; font-size: 9px; font-weight: 600; letter-spacing: .15em; line-height: 1.3; text-transform: uppercase; }
+.terrain-button { display: flex; min-height: 68px; flex-direction: column; align-items: flex-start; justify-content: space-between; gap: 8px; border: 1px solid rgba(255,255,255,.07); border-radius: 12px; background: #1d2024; padding: 10px; color: #a5adb5; transition: border-color .2s, background .2s, color .2s; }
+.terrain-button span { font-size: 10px; font-weight: 600; }
+.terrain-button:hover { border-color: rgba(237,117,73,.4); color: #e5e9ec; }
+.terrain-button-active { border-color: rgba(237,117,73,.55); background: rgba(237,117,73,.1); color: #ed7549; }
+.terrain-button-ice { border-color: rgba(128,189,208,.55); background: rgba(128,189,208,.1); color: #80bdd0; }
+.mars-map { height: 100%; min-height: 330px; width: 100%; background-color: #202326; background-image: radial-gradient(ellipse at 42% 48%, rgba(147,92,63,.28), transparent 50%), radial-gradient(ellipse at 12% 90%, rgba(88,63,48,.25), transparent 42%), linear-gradient(135deg, #242629, #1a1c1f); }
+.mars-map-ice { background-color: #1e282c; background-image: radial-gradient(ellipse at 45% 45%, rgba(91,151,167,.3), transparent 52%), radial-gradient(ellipse at 80% 18%, rgba(70,114,127,.2), transparent 40%), linear-gradient(135deg, #222b2e, #1a2023); }
+.leaflet-container { color: #e5e9ec; font: inherit; }
+.leaflet-control-zoom { overflow: hidden; border: 1px solid rgba(255,255,255,.12) !important; border-radius: 10px !important; box-shadow: none !important; }
+.leaflet-control-zoom a { border-bottom-color: rgba(255,255,255,.1) !important; background: #17191c !important; color: #c4cbd1 !important; }
+.leaflet-control-zoom a:hover { background: #25292e !important; color: #fff !important; }
+.leaflet-tooltip { border: 1px solid rgba(255,255,255,.1); border-radius: 7px; background: #17191c; color: #e5e9ec; box-shadow: 0 8px 20px rgba(0,0,0,.25); font-size: 10px; }
+.leaflet-tooltip-top:before { border-top-color: #17191c; }
+.gauge-ticks { background: repeating-linear-gradient(to bottom, transparent 0, transparent 13px, rgba(16,17,19,.65) 14px, rgba(16,17,19,.65) 15px); }
+.mars-marker { border: 0; background: transparent; }
+.habitat-marker__glow { position: absolute; inset: 5px 3px 4px; border-radius: 50%; background: rgba(118,199,162,.24); filter: blur(7px); }
+.habitat-marker__body { position: absolute; left: 3px; top: 3px; display: grid; width: 36px; height: 36px; place-items: center; border: 2px solid #b6f0d2; border-radius: 12px; background: #17352b; box-shadow: 0 0 0 3px rgba(118,199,162,.18), 0 5px 16px rgba(0,0,0,.4); }
+.habitat-marker__body svg { width: 25px; height: 25px; fill: none; stroke: #b6f0d2; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; }
+.destination-marker__pin { position: absolute; left: 4px; top: 1px; display: block; width: 32px; height: 40px; filter: drop-shadow(0 4px 5px rgba(0,0,0,.5)); }
+.destination-marker__pin svg { width: 100%; height: 100%; fill: #ed7549; stroke: #fff0e8; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.5; }
+.destination-marker__pin svg circle { fill: #fff4ed; stroke: #8c3d25; stroke-width: 1.2; }
+.astronaut-marker__pulse { position: absolute; inset: 2px; border: 1px solid rgba(124,198,255,.7); border-radius: 50%; background: rgba(80,165,220,.15); animation: astronaut-pulse 1.8s ease-out infinite; }
+.astronaut-marker__body { position: absolute; inset: 5px; display: grid; place-items: center; border: 2px solid white; border-radius: 50%; background: #24618b; box-shadow: 0 3px 12px rgba(0,0,0,.45); animation: astronaut-bob 1.4s ease-in-out infinite; }
+.astronaut-marker__body svg { width: 24px; height: 24px; fill: #eaf7ff; stroke: #eaf7ff; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.2; }
+.map-terrain-card { position: absolute; z-index: 500; top: 12px; left: 12px; display: flex; align-items: center; gap: 10px; border: 1px solid rgba(255,255,255,.1); border-radius: 12px; background: rgba(16,17,19,.88); padding: 9px 12px; box-shadow: 0 8px 24px rgba(0,0,0,.2); backdrop-filter: blur(10px); }
+.map-terrain-card > span:last-child { display: grid; gap: 3px; }
+.map-terrain-label { color: #87919a; font-size: 8px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+.map-terrain-card strong { color: #e5e9ec; font-size: 11px; font-weight: 600; }
+.terrain-swatch { width: 11px; height: 28px; border-radius: 5px; background: linear-gradient(180deg,#efaa6e,#9b5938); box-shadow: 0 0 12px rgba(237,117,73,.35); }
+.terrain-swatch-ice { background: linear-gradient(180deg,#c8eff6,#5799aa); box-shadow: 0 0 12px rgba(128,189,208,.35); }
+.map-legend { position: absolute; z-index: 500; bottom: 14px; left: 14px; display: flex; flex-wrap: wrap; gap: 12px; border: 1px solid rgba(255,255,255,.1); border-radius: 10px; background: rgba(16,17,19,.85); padding: 8px 10px; color: #b8c0c7; font-size: 9px; backdrop-filter: blur(8px); }
+.map-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.map-legend i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; }
+.legend-home { background: #76c7a2; box-shadow: 0 0 7px #76c7a2; }
+.legend-target { background: #ed7549; }
+.legend-crew { background: #65b9ef; box-shadow: 0 0 7px #65b9ef; }
+@keyframes astronaut-pulse { 0% { transform: scale(.65); opacity: .9; } 100% { transform: scale(1.45); opacity: 0; } }
+@keyframes astronaut-bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
+@media (prefers-reduced-motion: reduce) { .astronaut-marker__pulse, .astronaut-marker__body { animation: none; } }
+@media (max-width: 1023px) { .mars-map { min-height: 350px; } }
+@media (max-width: 480px) { .map-legend { bottom: 8px; left: 8px; gap: 8px; font-size: 8px; } .map-terrain-card { top: 8px; left: 8px; } }
