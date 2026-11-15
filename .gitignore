@@ -1,0 +1,11 @@
+@"
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+data/raw/MOLA/topography/*.img
+data/raw/MOLA/topography/*.IMG
+data/raw/MOLA/topography/*.hdr
+data/raw/MOLA/topography/*.lbl
+.pytest_cache/
+"@ | Out-File -Encoding utf8 .gitignore

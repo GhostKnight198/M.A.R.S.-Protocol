@@ -1,0 +1,62 @@
+System Architecture
+===================
+
+                    M.A.R.S. PROTOCOL
+           MARS SURFACE MISSION INTELLIGENCE
+                           |
+                           |
+             +-------------+-------------+
+             |                           |
+             v                           v
+     HABITAT OPERATIONS             ASTRONAUT FIELD
+        INTERFACE                     INTERFACE
+             |                           |
+             +-------------+-------------+
+                           |
+                           v
+                SHARED MISSION STATE
+                           |
+                           v
+               MISSION CONTROL ENGINE
+                           |
+       +-------------------+-------------------+
+       |                   |                   |
+       v                   v                   v
+  ENVIRONMENTAL       HUMAN MISSION       SCIENTIFIC
+  INTELLIGENCE          MODELLING          OBJECTIVES
+       |                   |                   |
+       v                   v                   v
+ TERRAIN ANALYSIS    MOBILITY MODEL      TARGET DATABASE
+ GEOLOGY             EVA TIME            PRIORITIES
+ ENVIRONMENT         RESOURCE MODEL      TASK DURATION
+ UNCERTAINTY         SAFETY LIMITS       EQUIPMENT
+       |                   |                   |
+       +-------------------+-------------------+
+                           |
+                           v
+                TRAVERSABILITY ENGINE
+                           |
+                           v
+                  MISSION PLANNER
+                           |
+                           v
+                   ROUTE PLANNER
+                      A* / W-A*
+                           |
+                           v
+               FEASIBILITY & SAFETY
+                    ASSESSMENT
+                           |
+                           v
+                 ROUTE / MISSION PLAN
+                           |
+                           v
+                 OPERATIONAL EXECUTION
+                           |
+                           v
+                ASTRONAUT FEEDBACK
+                           |
+                           v
+                  MISSION STATE UPDATE
+                           |
+                           +------> REPLANNING

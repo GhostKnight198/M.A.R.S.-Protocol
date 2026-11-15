@@ -1,0 +1,85 @@
+Data to Decision Pipeline
+=========================
+
+              NASA PLANETARY DATA SOURCES
+                         |
+                         v
+              +----------------------+
+              | DATA INGESTION       |
+              |----------------------|
+              | MOLA                 |
+              | HiRISE / DTM         |
+              | CTX                  |
+              | CRISM                |
+              | THEMIS               |
+              | MCS / RAD / MAVEN    |
+              | Rover imagery        |
+              +----------------------+
+                         |
+                         v
+              +----------------------+
+              | GEOSPATIAL PROCESSING |
+              |----------------------|
+              | Coordinate alignment |
+              | Raster processing    |
+              | Resolution handling  |
+              | NoData management    |
+              | Metadata / provenance|
+              +----------------------+
+                         |
+                         v
+              +----------------------+
+              | ENVIRONMENTAL LAYERS |
+              |----------------------|
+              | Elevation            |
+              | Slope                |
+              | Roughness            |
+              | Geological context   |
+              | Environmental context|
+              | Data uncertainty     |
+              +----------------------+
+                         |
+                         v
+              +----------------------+
+              | TRAVERSABILITY GRID   |
+              |----------------------|
+              | Terrain cost         |
+              | Hard exclusions      |
+              | Hazard penalties     |
+              | Uncertainty penalties|
+              +----------------------+
+                         |
+                         v
+              +----------------------+
+              | MISSION MODELLING     |
+              |----------------------|
+              | Astronaut mobility   |
+              | Travel time           |
+              | EVA duration          |
+              | Resource consumption |
+              | Return reserves       |
+              +----------------------+
+                         |
+                         v
+              +----------------------+
+              | OPTIMISATION          |
+              |----------------------|
+              | Objective selection  |
+              | Objective sequencing |
+              | A* route planning    |
+              | Alternative routes   |
+              +----------------------+
+                         |
+                         v
+              +----------------------+
+              | VALIDATION            |
+              |----------------------|
+              | Time feasibility     |
+              | Resource feasibility |
+              | Return feasibility   |
+              | Terrain safety       |
+              | Uncertainty           |
+              +----------------------+
+                         |
+                         v
+                FEASIBLE MISSION

@@ -1,0 +1,57 @@
+PROJECT: M.A.R.S. PROTOCOL
+
+REGION:
+    Gale Crater, Northwestern Crater Floor
+
+HABITAT:
+    ID: MARS-HAB-01
+    LAT: -4.59310427
+    LON: 137.42009295
+
+OPERATIONAL AREA:
+    10 KM RADIUS
+
+EXTENDED DATA AREA:
+    25 KM RADIUS
+
+COORDINATE SYSTEM:
+    Mars-centred Azimuthal Equidistant
+    Radius: 3396190 metres
+
+DATASETS:
+    MOLA
+    HiRISE DTM
+    CTX
+    CRISM
+
+INITIAL SCIENTIFIC TARGETS:
+    T01 - Yellowknife Bay
+    T02 - Glenelg
+    T03 - Kimberley
+    T04 - Darwin
+    T05 - Pahrump Hills
+
+CREW:
+    1 Astronaut
+
+EVA:
+    8 Hours
+
+NOMINAL WALKING SPEED:
+    1.0 KM/H
+
+RESOURCE MODEL:
+    Oxygen / Life Support
+    Water
+    Electrical Energy
+    Other Consumables
+
+ROUTE PLANNER:
+    A*
+
+MISSION:
+    Habitat -> Scientific Target -> Habitat
+
+PRIORITY:
+    Terrain Intelligence + Mission Feasibility
+    + Working Route Planner
