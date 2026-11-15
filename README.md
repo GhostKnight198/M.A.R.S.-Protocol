@@ -1,6 +1,5 @@
 # M.A.R.S. Protocol
 
-# M.A.R.S. Protocol
 
 **Mars Surface Mission Intelligence — NASA Space Apps Challenge 2026**
 
@@ -54,6 +53,116 @@ solution**.
 - **Mission report generator** — structured dictionary and human-readable text,
   including provenance and limitations.
 
+### System's Architecture
+================================================================================
+                          M.A.R.S. PROTOCOL
+                 Mars Surface Mission Intelligence
+================================================================================
+
+                    MISSION CONFIGURATION
+        habitat · targets · EVA budget · resources · reserves
+                              |
+                              v
+                    TERRAIN INGESTION
+        MOLA MEGDR · native ~463 m/px · Gale Crater crop
+        valid_mask marks no-data cells explicitly
+                              |
+                              v
+                     DERIVED LAYERS
+             slope (Horn 3×3) · roughness (local variance)
+                              |
+                              v
+                  TRAVERSABILITY ENGINE
+        soft cost grid · hard-exclusion mask · unknown mask
+        hard and soft kept architecturally separate
+                              |
+              +---------------+---------------+
+              |                               |
+              v                               v
+        ROUTE PLANNER                   MOBILITY MODEL
+        A* / weighted A*                effective speed
+        corner-cut prevention           segment + total time
+        no-path detection
+              |                               |
+              +---------------+---------------+
+                              |
+                              v
+                  RESOURCE & EVA ACCOUNTING
+        O2 · H2O · energy · other  (tracked independently)
+        contingency fraction applied per resource
+                              |
+                              v
+                    OBJECTIVE MANAGER
+             priority ranking · target validation
+             mandatory / optional split
+                              |
+                              v
+                     MISSION PLANNER
+        mandatory first · greedy optional insertion
+        full round-trip feasibility including return
+        optional objectives rejected when infeasible
+                              |
+                              v
+                SAFETY & FEASIBILITY ENGINE
+        per-resource checks · return feasibility · time
+        3-tier: acceptable · caution · do-not-recommend
+        every warning and rejection carries a reason
+                              |
+                              v
+                       MISSION STATE
+        position · objectives · route · resources
+        obstacles · status · version · history
+                              |
+                              v
+                DYNAMIC REPLANNING ENGINE
+        obstacle -> terrain update -> full reassessment
+        continue · modify · skip-optional · return · abort
+        scoped to mission, not to route
+                              |
+                              v
+                  MISSION REPORT GENERATOR
+        plan · consumption · safety · provenance · limits
+        structured dict + human-readable text
+                              |
+                              v
+                         OUTPUT
+================================================================================
+SEPARATION OF CONCERNS (enforced structurally)
+--------------------------------------------------------------------------------
+  Traversability  ≠  route planning
+  Mobility        ≠  resource accounting
+  Resource model  ≠  safety assessment
+  Route feasibility  ≠  mission feasibility
+  Replanning      ≠  merely finding another path
+
+  Each engine is independently testable, shares state only through the
+  documented TerrainGrid / TraversabilityResult / Route / MissionState
+  contracts, and can be replaced without reworking the others.
+
+DATA CONTRACTS
+--------------------------------------------------------------------------------
+  TerrainGrid          elevation · slope · roughness · hazard_mask
+                       valid_mask · resolution_m · origin_lat/lon
+  TraversabilityResult cost_grid · hard_exclusion_mask · unknown_mask
+                       slope_penalty · roughness_penalty · params
+  Route                waypoints · distance_m · travel_duration_h
+                       terrain_cost · status · uses_unknown_terrain
+  MissionState         current_position · habitat · objectives
+                       route · elapsed_h · remaining_resources
+                       obstacles · observations · status · version
+
+PROVENANCE AND INTEGRITY (enforced throughout)
+--------------------------------------------------------------------------------
+  · Every dataset recorded with source, native resolution, observation date
+  · Every scenario parameter labelled as scenario-defined, not observed
+  · Every derived layer traceable to its source elevation
+  · Every warning and rejection carries a specific numerical reason
+  · No upsampling — native MOLA resolution preserved
+  · No fabricated data — unknown terrain carried through as unknown
+  · No silent assumptions — provenance surfaced in every mission report
+================================================================================
+  
+
 ### Scaffolded but not integrated end-to-end within the hackathon window
 
 - **FastAPI surface** — endpoints defined (`/health`, `/pipeline/run`,
@@ -70,7 +179,8 @@ can be substituted without reworking the intelligence layer.
 
 ---
 
-## Future R&D direction
+
+### Future R&D direction
 
 What we intend to develop independently beyond the hackathon — this is the
 roadmap, not a claim about the current build:
